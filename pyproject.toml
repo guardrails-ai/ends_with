@@ -1,7 +1,7 @@
 [project]
-name = "regexmatch"
+name = "ends_with"
 version = "0.0.0"
-description = "Template repo for Guardrails Hub validators."
+description = "Validates that a list or string ends with a given value."
 authors = [
     {name = "Guardrails AI", email = "contact@guardrailsai.com"}
 ]
