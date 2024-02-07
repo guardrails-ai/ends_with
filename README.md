@@ -117,13 +117,6 @@ guard.parse("""
 """)
 ```
 
-## Validating string output via RAIL
-
-tbd
-
-## Validating JSON output via RAIL
-
-tbd
 
 # API Reference
 
