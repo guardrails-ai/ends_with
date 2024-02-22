@@ -39,7 +39,7 @@ class EndsWith(Validator):
             return FailResult(
                 error_message=f"{value} must end with {self._end}",
                 fix_value=(
-                    value.extend(self._end)
+                    value + [self._end]
                     if isinstance(value, list)
                     else value + self._end
                 ),
