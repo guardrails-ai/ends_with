@@ -35,7 +35,6 @@ class EndsWith(Validator):
     def validate(self, value: Any, metadata: Dict) -> ValidationResult:
         logger.debug(f"Validating whether {value} ends with {self._end}...")
 
-        print(value, self._end)
         if value[-1] != self._end:
             return FailResult(
                 error_message=f"{value} must end with {self._end}",
