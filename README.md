@@ -48,34 +48,52 @@ In this example, we apply the validator to a list field of a generated JSON outp
 
 ```python
 # Import Guard and Validator
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from guardrails.hub import EndsWith
 from guardrails import Guard
 
 # Initialize Validator
-val = EndsWith(
-    end=['quick read', 'all'],
-    on_fail="fix"
-)
+val = EndsWith(end="all", on_fail="exception")
+
 
 class Article(BaseModel):
     """Info about article."""
-    title: str = Field(description
+
+    title: str = Field(description="Title of the article")
     tags: list[str] = Field(
-        description="Tags that describe the article",
-        validators=[val]
+        description="Tags that describe the article", validators=[val]
     )
+
 
 # Create a Guard to check for valid Pydantic output
 guard = Guard.from_pydantic(output_class=Article)
 
 # Run LLM output generating JSON through guard
-guard.parse("""
-{
-    "title": "The LLM Infra Stack",
-    "tags": ["infra", "ai", "quick read", "all"]
-}
-""")
+guard.parse(
+    """
+    {
+        "title": "The LLM Infra Stack",
+        "tags": ["infra", "ai", "quick read", "all"]
+    }
+    """
+)
+
+try:
+    # Run LLM output generating JSON through guard
+    guard.parse(
+        """
+        {
+            "title": "The LLM Infra Stack",
+            "tags": ["infra", "ai", "quick read"]
+        }
+        """
+    )
+except Exception as e:
+    print(e)
+```
+Output:
+```console
+Validation failed for field with errors: ['infra', 'ai', 'quick read'] must end with all
 ```
 
 ## API Reference
@@ -87,7 +105,7 @@ Initializes a new instance of the Validator class.
 
 **Parameters:**
 
-- **`end`** _(Union[str, list])_: The expected end to the string or list. For strings, this should be a string. For lists, this should either be a list, or a single scalar which will be contained in a list.
+- **`end`** _(str)_: The expected end to the string or list. For strings, the input must end with this character. For lists, the last element must be equal to this string value.
 - **`on_fail`** *(str, Callable):* The policy to enact when a validator fails. If `str`, must be one of `reask`, `fix`, `filter`, `refrain`, `noop`, `exception` or `fix_reask`. Otherwise, must be a function that is called when the validator fails.
 
 </ul>
